@@ -142,8 +142,7 @@ The application will:
 - Reference object measurements determine final accuracy
 - Debug mode provides detailed visual feedback
 
-## License
-[Your License Information Here]
-
 ## Contact
-[Your Contact Information Here]
+**Benedict Raymond**
+
+[Email](mailto:benedictraymond21@gmail.com) | [LinkedIN](linkedin.com/in/benedict-raymond/)
