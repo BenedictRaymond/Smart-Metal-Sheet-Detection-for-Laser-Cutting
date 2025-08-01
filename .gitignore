@@ -1,0 +1,10 @@
+.venv/
+calibration_data/
+debug/
+dimensions/
+overlap_x_values/
+background_image.png
+object_image.png
+detected_material.png
+rectangle_sketch.dxf
+reference_image.png
