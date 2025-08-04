@@ -259,7 +259,7 @@ class CalibrateCamera:
 
 def main():
     calibrate = CalibrateCamera(r'calibration_data', (9, 6))
-    calibrate.calibrate_camera(r'Calibration\data')
+    calibrate.calibrate_camera(r'Initialisation\Calibration\data')
 
 
 if __name__ == '__main__':

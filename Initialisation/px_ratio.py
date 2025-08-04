@@ -1,9 +1,14 @@
-from Utils.stitcher import CustomGridImageStitching
-from Utils.undistorter import ImageUndistorter
-# from Utils.bg_remover import BackgroundSubtractor
-import Utils.detect_material as detect_material
-import cv2
 import os
+import sys
+import cv2
+
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+from Utils.stitcher import CustomGridImageStitching  # noqa: E402
+from Utils.undistorter import ImageUndistorter  # noqa: E402
+import Utils.detect_material as detect_material  # noqa: E402
 
 ref_images = [
     [
