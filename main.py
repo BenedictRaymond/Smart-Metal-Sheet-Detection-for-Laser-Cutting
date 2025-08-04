@@ -4,13 +4,14 @@ from Utils.undistorter import ImageUndistorter
 import Utils.detect_material as detect_material
 from Utils.dxf_sketcher import create_dxf
 import cv2
+import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     obj_images = [
         [
-            r"ref_images\dim_01.png",
-            r"ref_images\dim_02.png",
-            r"ref_images\dim_03.png"
+            r"ref_images\dim_y_large_01.png",
+            r"ref_images\dim_y_large_02.png",
+            r"ref_images\dim_y_large_03.png"
         ]
     ]
 
@@ -52,10 +53,49 @@ if __name__ == "__main__":
                 width_ratio = f.read().strip()
             h_mm = is_found['dimensions']['height'] / float(height_ratio)
             w_mm = is_found['dimensions']['width'] / float(width_ratio)
+
+            # Round the dimensions
             h_mm = round(h_mm, 1)
             w_mm = round(w_mm, 1)
-            print(f"\n\nHeight in metre: {h_mm}")
-            print(f"Width in metre: {w_mm}")
+
+            # Create figure with 1x3 subplot grid
+            plt.figure(figsize=(15, 5))
+
+            # Plot background image
+            plt.subplot(131)
+            plt.imshow(cv2.cvtColor(bg_image, cv2.COLOR_BGR2RGB))
+            plt.title('Background Image')
+            plt.axis('off')
+
+            # Plot object image
+            plt.subplot(132)
+            plt.imshow(cv2.cvtColor(obj_image, cv2.COLOR_BGR2RGB))
+            plt.title('Object Image')
+            plt.axis('off')
+
+            # Plot detected material
+            plt.subplot(133)
+            plt.imshow(
+                    cv2.cvtColor(is_found['result_image'], cv2.COLOR_BGR2RGB)
+            )
+            plt.title('Detected Material')
+            plt.axis('off')
+
+            # Add dimensions as text below the plots
+            plt.figtext(
+                0.5,
+                0.02,
+                f'Dimensions: {h_mm}m x {w_mm}m',
+                ha='center',
+                fontsize=12,
+                bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 5}
+            )
+
+            # Save the plot
+            plt.savefig(
+                'measurement_results.png', bbox_inches='tight', dpi=300
+            )
+            plt.show()
 
             if create_dxf(h_mm, w_mm, filename="rectangle_sketch.dxf"):
                 print("DXF file created successfully.")
