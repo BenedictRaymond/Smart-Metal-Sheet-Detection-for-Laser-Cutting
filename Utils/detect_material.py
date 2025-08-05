@@ -267,6 +267,7 @@ def detect_material_on_bed(empty_bed_path, with_material_path, debug=False):
             plt.axis('off')
 
             plt.tight_layout()
+            plt.savefig('debug/detection_process.png')
             plt.show()
 
         cv2.putText(

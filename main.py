@@ -7,7 +7,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-def display_images(bg_images, obj_images, row, col, title=None):
+def display_images(bg_images, obj_images, row, col, title):
     """Display a list of images with optional titles."""
     plot_num = row * 200 + col * 10
     plt.figure(figsize=(15, 5))
@@ -29,6 +29,7 @@ def display_images(bg_images, obj_images, row, col, title=None):
             plt.imshow(cv2.cvtColor(obj_img, cv2.COLOR_BGR2RGB))
             plt.title(f'Object Image {i+1}')
             plt.axis('off')
+    plt.savefig(f'debug/{title}.png')
     plt.show()
 
 

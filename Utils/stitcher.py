@@ -50,6 +50,7 @@ class CustomPanoramaStitcher:
         plt.axis('off')
 
         plt.tight_layout()
+        plt.savefig(f"debug/{title}.jpg")
         plt.show()
 
     def extract_template(self, img: np.ndarray) -> np.ndarray:
