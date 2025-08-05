@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 from typing import List, Tuple, Optional
 
 
@@ -28,6 +29,28 @@ class CustomPanoramaStitcher:
         self.current_row = 0
         self.current_col = 0
         self.initial = True
+        self.debug = False
+
+    def display_matches(self, images, stitched, title):
+        """Display original images and stitching result"""
+        n_images = len(images)
+        plt.figure(figsize=(15, 5))
+
+        # Display original images
+        for idx, img in enumerate(images):
+            plt.subplot(2, n_images, idx + 1)
+            plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+            plt.title(f'Image {idx + 1}')
+            plt.axis('off')
+
+        # Display stitched result
+        plt.subplot(2, 1, 2)
+        plt.imshow(cv2.cvtColor(stitched, cv2.COLOR_BGR2RGB))
+        plt.title(f'Stitched Result: {title}')
+        plt.axis('off')
+
+        plt.tight_layout()
+        plt.show()
 
     def extract_template(self, img: np.ndarray) -> np.ndarray:
         """Extract left portion of image as template"""
@@ -224,6 +247,10 @@ class CustomPanoramaStitcher:
                 f"debug/match_visualization_{self.count}.jpg",
                 visualization
         )
+        images = [img1, img2]
+        if self.debug:
+            # Display match visualization
+            self.display_matches(images, visualization, f'Match {self.count}')
 
         return result
 
@@ -361,6 +388,7 @@ class CustomGridImageStitching:
         self.debug = debug
         self.initial_process = initial_process
         self.stitcher.initial = self.initial_process
+        self.stitcher.debug = self.debug
 
     def process_stitching(self):
         """Stitch images in grid method using custom template matching"""
@@ -394,6 +422,10 @@ class CustomGridImageStitching:
 
             if self.debug:
                 cv2.imwrite(f"debug/row_{i}_stitched.jpg", stitched_row)
+                # Display row stitching result
+                self.stitcher.display_matches(
+                    row_images, stitched_row, f'Row {i} Stitching'
+                )
 
         if not row_stitched:
             print("All row stitching failed")
@@ -405,6 +437,6 @@ class CustomGridImageStitching:
         if result is None:
             print("Failed to stitch columns")
             return None
-        self.stitcher.current_col += 1
 
+        self.stitcher.current_col += 1
         return result
