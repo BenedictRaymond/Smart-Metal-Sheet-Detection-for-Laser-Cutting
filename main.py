@@ -6,7 +6,34 @@ from Utils.dxf_sketcher import create_dxf
 import cv2
 import matplotlib.pyplot as plt
 
+
+def display_images(bg_images, obj_images, row, col, title=None):
+    """Display a list of images with optional titles."""
+    plot_num = row * 200 + col * 10
+    plt.figure(figsize=(15, 5))
+    plt.suptitle(title, fontsize=16)
+    for bg_image in bg_images:
+        for i, bg_img in enumerate(bg_image):
+            if isinstance(bg_img, str):
+                bg_img = cv2.imread(bg_img)
+            plt.subplot(plot_num + i + 1)
+            plt.imshow(cv2.cvtColor(bg_img, cv2.COLOR_BGR2RGB))
+            plt.title(f'Background Image {i+1}')
+            plt.axis('off')
+
+    for obj_image in obj_images:
+        for i, obj_img in enumerate(obj_image):
+            if isinstance(obj_img, str):
+                obj_img = cv2.imread(obj_img)
+            plt.subplot(plot_num + i + 1 + row * col)
+            plt.imshow(cv2.cvtColor(obj_img, cv2.COLOR_BGR2RGB))
+            plt.title(f'Object Image {i+1}')
+            plt.axis('off')
+    plt.show()
+
+
 if __name__ == "__main__":
+    debug = True
     obj_images = [
         [
             r"ref_images\dim_y_large_01.png",
@@ -23,20 +50,31 @@ if __name__ == "__main__":
         ]
     ]
 
+    row, col = len(bg_images), len(bg_images[0])
+    if debug:
+        display_images(bg_images, obj_images, row, col, title="Input Images")
+
     path = 'calibration_data'
-    undistorter = ImageUndistorter(path, bg_images, row=1, col=3)
+    undistorter = ImageUndistorter(path, bg_images, row=row, col=col)
     bg_images = undistorter.load_calibration_data()
 
-    grid_stitcher = CustomGridImageStitching(bg_images, (1, 3), debug=True)
-    bg_image = grid_stitcher.process_stitching()
-
-    undistorter = ImageUndistorter(path, obj_images, row=1, col=3)
+    undistorter = ImageUndistorter(path, obj_images, row=row, col=col)
     obj_images = undistorter.load_calibration_data()
+
+    if debug:
+        display_images(
+            bg_images,
+            obj_images,
+            row, col, title="Undistorted Images"
+        )
+
+    grid_stitcher = CustomGridImageStitching(bg_images, (row, col))
+    bg_image = grid_stitcher.process_stitching()
 
     grid_stitcher = CustomGridImageStitching(
                         obj_images,
-                        (1, 3),
-                        debug=True,
+                        (row, col),
+                        debug=debug,
                         initial_process=False)
     obj_image = grid_stitcher.process_stitching()
 
@@ -44,7 +82,9 @@ if __name__ == "__main__":
     cv2.imwrite("background_image.png", bg_image)
 
     try:
-        is_found = detect_material.detect_material_on_bed(bg_image, obj_image)
+        is_found = detect_material.detect_material_on_bed(
+                        bg_image, obj_image, debug=debug
+                    )
         if is_found['material_found']:
             print("Material Found")
             with open(r"dimensions\height_ratio.txt", "r") as f:

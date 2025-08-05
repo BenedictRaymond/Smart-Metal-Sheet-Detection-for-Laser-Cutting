@@ -171,7 +171,7 @@ def cropping_detection(img, x, y, w, h, threshold_ratio=0.6):
     return x, y, w, h
 
 
-def detect_material_on_bed(empty_bed_path, with_material_path):
+def detect_material_on_bed(empty_bed_path, with_material_path, debug=False):
     """
     Detect material placed on CNC bed using image comparison
 
@@ -229,10 +229,46 @@ def detect_material_on_bed(empty_bed_path, with_material_path):
         largest_contour = max(material_contours, key=cv2.contourArea)
 
         x, y, w, h = cv2.boundingRect(largest_contour)
-        x,  y, w, h = cropping_detection(thresh, x, y, w, h)
+
+        initial_rect = with_material.copy()
+        cv2.rectangle(initial_rect, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        x, y, w, h = cropping_detection(thresh, x, y, w, h)
 
         result_img = with_material.copy()
         cv2.rectangle(result_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        if debug:
+            # Visualization of the detection stages
+            plt.figure(figsize=(15, 5))
+
+            # Difference Image
+            plt.subplot(221)
+            plt.imshow(diff, cmap='gray')
+            plt.title('Difference Image')
+            plt.axis('off')
+
+            # Threshold Image
+            plt.subplot(222)
+            plt.imshow(thresh, cmap='gray')
+            plt.title('Threshold Result')
+            plt.axis('off')
+
+            # Initial Rectangle
+            plt.subplot(223)
+            plt.imshow(cv2.cvtColor(initial_rect, cv2.COLOR_BGR2RGB))
+            plt.title('Initial Detection')
+            plt.axis('off')
+
+            # Final Result
+            plt.subplot(224)
+            plt.imshow(cv2.cvtColor(result_img, cv2.COLOR_BGR2RGB))
+            plt.title('Final Result')
+            plt.axis('off')
+
+            plt.tight_layout()
+            plt.show()
+
         cv2.putText(
             result_img,
             f'Material: {w}x{h} pixels',
