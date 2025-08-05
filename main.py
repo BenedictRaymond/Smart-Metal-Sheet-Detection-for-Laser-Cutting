@@ -92,12 +92,12 @@ if __name__ == "__main__":
                 height_ratio = f.read().strip()
             with open(r"dimensions\width_ratio.txt", "r") as f:
                 width_ratio = f.read().strip()
-            h_mm = is_found['dimensions']['height'] / float(height_ratio)
-            w_mm = is_found['dimensions']['width'] / float(width_ratio)
+            h_m = is_found['dimensions']['height'] / float(height_ratio)
+            w_m = is_found['dimensions']['width'] / float(width_ratio)
 
             # Round the dimensions
-            h_mm = round(h_mm, 1)
-            w_mm = round(w_mm, 1)
+            h_m = round(h_m, 1)
+            w_m = round(w_m, 1)
 
             # Create figure with 1x3 subplot grid
             plt.figure(figsize=(15, 5))
@@ -126,7 +126,7 @@ if __name__ == "__main__":
             plt.figtext(
                 0.5,
                 0.02,
-                f'Dimensions: {h_mm}m x {w_mm}m',
+                f'Dimensions: {h_m}m x {w_m}m',
                 ha='center',
                 fontsize=12,
                 bbox={'facecolor': 'white', 'alpha': 0.8, 'pad': 5}
@@ -138,7 +138,7 @@ if __name__ == "__main__":
             )
             plt.show()
 
-            if create_dxf(h_mm, w_mm, filename="rectangle_sketch.dxf"):
+            if create_dxf(h_m, w_m, filename="rectangle_sketch.dxf"):
                 print("DXF file created successfully.")
             else:
                 print("Failed to create DXF file.")
