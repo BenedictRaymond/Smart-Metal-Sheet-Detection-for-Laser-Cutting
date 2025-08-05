@@ -232,6 +232,7 @@ def detect_material_on_bed(empty_bed_path, with_material_path, debug=False):
 
         initial_rect = with_material.copy()
         cv2.rectangle(initial_rect, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.imwrite('debug/initial_rect.png', initial_rect)
 
         x, y, w, h = cropping_detection(thresh, x, y, w, h)
 
